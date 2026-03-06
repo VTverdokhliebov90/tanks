@@ -1,7 +1,4 @@
 import Phaser from "phaser";
-import {WindowConfig} from "../Constants";
-import VictoryScene from "./VictoryScene";
-import MainScene from "./MainScene";
 
 export default class StartScene extends Phaser.Scene {
     constructor() {
@@ -49,21 +46,3 @@ export default class StartScene extends Phaser.Scene {
         });
     }
 }
-
-new Phaser.Game({
-    type: Phaser.AUTO,
-    physics: {default: 'arcade'},
-
-    render: {
-        pixelArt: true,
-        antialias: false
-    },
-    scale: {
-        mode: Phaser.Scale.FIT, // Растягивает игру пропорционально, чтобы она влезла в экран
-        parent: 'game-container',
-        width: WindowConfig.width,
-        height: WindowConfig.height,
-        autoCenter: Phaser.Scale.FIT  // Центрирует канвас в браузере
-    },
-    scene: [StartScene, MainScene, VictoryScene],
-});
