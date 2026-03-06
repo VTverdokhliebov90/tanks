@@ -1,7 +1,7 @@
 import StartScene from './game/scenes/StartScene.js';
 import MainScene from './game/scenes/MainScene.js';
 import VictoryScene from './game/scenes/VictoryScene.js';
-import {WindowConfig} from "./game/Constants.js";
+import {WindowConfig} from './game/Constants.js';
 
 new Phaser.Game({
     type: Phaser.AUTO,
