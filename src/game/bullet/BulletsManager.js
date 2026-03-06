@@ -1,5 +1,5 @@
 import Bullet from './Bullet';
-import {Direction, GameConfig, GameEvents} from '../Constants';
+import {Direction, GameConfig, GameEvents} from '../Constants.js';
 
 export default class BulletsManager {
     constructor(scene) {

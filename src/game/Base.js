@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import {Depth, BaseProps, WallType, GameAnimations, GameEvents} from './Constants';
+import {Depth, BaseProps, WallType, GameAnimations, GameEvents} from './Constants.js';
 
 export default class Base extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, spawnPoint) {

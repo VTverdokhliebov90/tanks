@@ -1,4 +1,4 @@
-import {EnemyConfig, GameConfig, GameEvents, StatsPane, WindowConfig} from '../Constants';
+import {EnemyConfig, GameConfig, GameEvents, StatsPane, WindowConfig} from '../Constants.js';
 
 export default class UIManager {
     constructor(scene) {

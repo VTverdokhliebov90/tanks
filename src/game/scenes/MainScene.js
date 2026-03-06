@@ -7,17 +7,17 @@ import {
     StatsPane,
     GameEvents, Scenes,
 } from "../Constants";
-import Player from '../Player';
-import AnimationManager from '../Animations';
-import TextureManager from '../TextureManager';
-import BulletsManager from '../bullet/BulletsManager';
-import EnemyManager from '../enemy/EnemyManager';
-import Base from "../Base";
-import UIManager from "../ui/UIManager";
-import BonusManager from "../bonus/BonusManager";
-import BuilderManager from "../builder/BuilderManager";
-import CollisionManager from "../CollisionManager";
-import StageManager from "../levels/StageManager";
+import Player from '../Player.js';
+import AnimationManager from '../Animations.js';
+import TextureManager from '../TextureManager.js';
+import BulletsManager from '../bullet/BulletsManager.js';
+import EnemyManager from '../enemy/EnemyManager.js';
+import Base from "../Base.js";
+import UIManager from "../ui/UIManager.js";
+import BonusManager from "../bonus/BonusManager.js";
+import BuilderManager from "../builder/BuilderManager.js";
+import CollisionManager from "../CollisionManager.js";
+import StageManager from "../levels/StageManager.js";
 
 export default class MainScene extends Phaser.Scene {
 

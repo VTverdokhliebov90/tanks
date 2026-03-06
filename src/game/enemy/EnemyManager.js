@@ -1,5 +1,5 @@
-import EnemyTank from './EnemyTank';
-import {EnemySpawnPoints, EnemyConfig, EnemyLevels, GameEvents, GameAnimations} from '../Constants';
+import EnemyTank from './EnemyTank.js';
+import {EnemySpawnPoints, EnemyConfig, EnemyLevels, GameEvents, GameAnimations} from '../Constants.js';
 
 export default class EnemyManager {
     constructor(scene) {

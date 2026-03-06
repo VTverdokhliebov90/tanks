@@ -5,7 +5,7 @@ import {
     EnemyLevels, GameAnimations,
     GameEvents as GamepadEvents,
     GameEvents, ParticipantType
-} from '../Constants';
+} from '../Constants.js';
 
 export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, tankLevel = EnemyLevels.ONE) {
