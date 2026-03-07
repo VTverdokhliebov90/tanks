@@ -1,4 +1,10 @@
-export default {
-    base: './', // Означает "искать файлы относительно текущей папки"
-    // ... остальные настройки (plugins и т.д.)
-}
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+    base: './',
+    build: {
+        outDir: 'dist',
+        assetsDir: 'assets',
+        sourcemap: false
+    }
+})
