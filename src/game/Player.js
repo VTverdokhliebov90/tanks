@@ -111,7 +111,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     applyInertia() {
-        const friction = 0.95; // Сделай чуть меньше для резкости
+        const friction = 0.95;
         let vx = this.body.velocity.x;
         let vy = this.body.velocity.y;
 
@@ -125,7 +125,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.body.setVelocity(vx, vy);
 
-        // Если всё заглохло — стопаем анимацию
         if (vx === 0 && vy === 0) {
             this.anims.stop();
         }
@@ -276,6 +275,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     disablePlayer() {
         this.setActive(false);
         this.setVisible(false);
-        this.body.enable = false; // Выключаем физику
+        this.body.enable = false;
     }
 }
