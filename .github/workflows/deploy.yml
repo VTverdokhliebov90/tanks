@@ -1,28 +1,24 @@
-name: Deploy to GitHub Pages
+name: Deploy Vite App to GitHub Pages
+
 on:
   push:
-    branches: [main] # При пуше в main начнется магия
+    branches:
+      - main # or your default branch
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-      - name: Install and Build
-        run: |
-          npm install
-          npm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: './dist' # Пушим только результат сборки
+
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: skywarth/vite-github-pages-deployer@v1.5.0
+        with:
+        # Optional: specify a custom build command if needed
+        # build-command: 'npm install && npm run build'
+        # Optional: specify the publish directory
+        # publish-dir: './dist'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
