@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
-import {Depth, BaseProps, WallType, GameAnimations, GameEvents} from './Constants.js';
+import {Depth, BaseProps, WallType, GameAnimations, GameEvents, Atlas16} from './Constants.js';
 
 export default class Base extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, spawnPoint) {
-        super(scene, spawnPoint.x, spawnPoint.y, 'spritesheet_16x16', BaseProps.frame);
+        super(scene, spawnPoint.x, spawnPoint.y, Atlas16, BaseProps.frame);
 
         scene.add.existing(this);
         scene.physics.add.existing(this, true); // true = static body (база не двигается)
@@ -69,7 +69,7 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
         this.setFrame(BaseProps.frame + 1);
 
         // 2. Создаем большой взрыв
-        const explosion = this.scene.add.sprite(this.x, this.y, 'spritesheet_16x16');
+        const explosion = this.scene.add.sprite(this.x, this.y, Atlas16);
         explosion.setScale(2); // База взрывается мощнее танка
         explosion.setDepth(Depth.TANK + 1);
         explosion.play(GameAnimations.EXPLOSION);

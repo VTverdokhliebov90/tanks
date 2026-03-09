@@ -1,9 +1,9 @@
 import Phaser from "phaser";
-import {BonusType, Depth, GameEvents} from "../Constants";
+import {Atlas16, BonusType, Depth, GameEvents} from "../Constants";
 
 export default class Bonus extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, bonusType) {
-        super(scene, x, y, 'spritesheet_16x16', 191 + bonusType);
+        super(scene, x, y, Atlas16, 191 + bonusType);
 
         this.setDepth(Depth.BUSH + 1);
         this.bonusType = bonusType;

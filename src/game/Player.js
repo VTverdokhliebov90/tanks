@@ -1,16 +1,17 @@
 import Phaser from 'phaser';
 import {
+    Atlas16,
     Direction, GameAnimations,
     GameAnimations as Animations,
     GameConfig,
     GameEvents,
-    GameEvents as GamepadEvents, ParticipantType,
+    ParticipantType,
     PlayerLevels
 } from "./Constants";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, spawnPoint = GameConfig.PLAYER_1_SPAWN_POINT, tankLevel = PlayerLevels[0]) {
-        super(scene, spawnPoint.x, spawnPoint.y, 'spritesheet_16x16', tankLevel.frame);
+        super(scene, spawnPoint.x, spawnPoint.y, Atlas16, tankLevel.frame);
 
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -20,7 +21,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.spawnPoint = spawnPoint;
 
         this.isShielded = false;
-        this.shieldSprite = scene.add.sprite(this.x, this.y, 'spritesheet_16x16');
+        this.shieldSprite = scene.add.sprite(this.x, this.y, Atlas16);
         this.shieldSprite.setBlendMode(Phaser.BlendModes.SCREEN);
         this.shieldSprite.play('shield-loop');
         this.shieldSprite.setVisible(this.isShielded);
@@ -50,9 +51,81 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     update(...args) {
+        this.handlePlayerInputs();
+        // this.testPad();
         this.handleMovement();
         this.handleAttack();
         this.handleShieldVisual();
+    }
+
+    testPad() {
+        const pad = this.scene.input.gamepad.getPad(0);
+        if (pad) {
+            // 1. Проверяем все кнопки. Если увидишь индекс с pressed: true — это твоя кнопка.
+            pad.buttons.forEach((btn, index) => {
+                if (btn.pressed) console.log(`Нажата кнопка №${index}`);
+            });
+
+            // 2. Проверяем все оси. Если при нажатии D-pad меняется число — это ось.
+            // pad.axes.forEach((axis, index) => {
+            //     if (
+            //         index !== 0
+            //         // && index !==1
+            //         && index !== 2
+            //         && index !== 3
+            //         && index !== 4
+            //         && index !== 5
+            //         && index !== 6
+            //         && index !== 7
+            //         && index !== 8
+            //         && index !== 9
+            //         && (Math.abs(axis.value) > 0.2 || (Math.abs(axis.value) < -0.2))
+            //     )
+            //         console.log(`Ось №${index} изменилась: ${axis.value}`);
+            // });
+        }
+    }
+
+    handlePlayerInputs() {
+        this.handleKeyboardInputs();
+        this.handlePadInputs();
+    }
+
+    handleKeyboardInputs() {
+        if (this.moveUpKey.isDown) {
+            this.currentDirection = Direction.UP;
+        } else if (this.moveRightKey.isDown) {
+            this.currentDirection = Direction.RIGHT;
+        } else if (this.moveLeftKey.isDown) {
+            this.currentDirection = Direction.LEFT;
+        } else if (this.moveDownKey.isDown) {
+            this.currentDirection = Direction.DOWN;
+        } else {
+            this.currentDirection = Direction.NONE;
+        }
+    }
+
+    handlePadInputs() {
+        const pad = this.scene.input.gamepad ? this.scene.input.gamepad.getPad(0) : null;
+        if (!pad || !pad.axes) return;
+
+        const hatValue = pad.axes[9] ? pad.axes[9].value : 0;
+
+        if (this.moveUpKey.isDown || hatValue < -0.9) {
+            this.currentDirection = Direction.UP;    // значение: -1
+        } else if (this.moveRightKey.isDown || hatValue > -0.5 && hatValue < -0.3) {
+            this.currentDirection = Direction.RIGHT; // значение: -0.4
+        } else if (this.moveLeftKey.isDown || hatValue > 0.6 && hatValue < 0.8) {
+            this.currentDirection = Direction.LEFT;  // значение: 0.7
+        } else if (this.moveDownKey.isDown || hatValue > 0.05 && hatValue < 0.25) {
+            this.currentDirection = Direction.DOWN;  // значение: 0.14 (примерно)
+        } else {
+            this.currentDirection = Direction.NONE;
+        }
+
+        if (this.currentDirection !== Direction.NONE) {
+            // console.log("Current Direction:", this.currentDirection);
+        }
     }
 
     spawn(resetLevel = true) {
@@ -60,7 +133,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.disablePlayer();
 
-        const spawnStar = scene.add.sprite(spawnPoint.x, spawnPoint.y, 'spritesheet_16x16');
+        const spawnStar = scene.add.sprite(spawnPoint.x, spawnPoint.y, Atlas16);
         spawnStar.setBlendMode(Phaser.BlendModes.SCREEN);
         spawnStar.play(GameAnimations.SPAWN_STAR);
         spawnStar.on(GameAnimations.ANIMATIONCOMPLETE, () => {
@@ -92,22 +165,44 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     // MOVEMENT
     handleMovement() {
-        const onIce = this.checkIfOnIce();
-        const anyKey = this.moveUpKey.isDown
-            || this.moveDownKey.isDown
-            || this.moveLeftKey.isDown
-            || this.moveRightKey.isDown;
+        const level = this.level;
+        const speed = this.speed;
+        const prevVelocityX = this.body.velocity.x;
+        const prevVelocityY = this.body.velocity.y;
 
-        if (anyKey) {
-            this.move();
-        } else if (onIce) {
-            // Скользим только если кнопки НЕ нажаты
-            this.applyInertia();
-        } else {
-            this.body.setVelocity(0, 0); // Мгновенный стоп на земле
-            this.anims.stop();
+        switch (this.currentDirection) {
+            case Direction.UP:
+                if (prevVelocityY === 0) this.x = Math.round(this.x / this.gridSize) * this.gridSize;
+                this.setVelocity(0, -speed);
+                this.play(`move-${level}-${Direction.UP}`, true);
+                break;
+            case Direction.DOWN:
+                if (prevVelocityY === 0) this.x = Math.round(this.x / this.gridSize) * this.gridSize;
+                this.setVelocity(0, speed);
+                this.play(`move-${level}-${Direction.DOWN}`, true);
+                break;
+            case Direction.LEFT:
+                if (prevVelocityX === 0) this.y = Math.round(this.y / this.gridSize) * this.gridSize;
+                this.setVelocity(-speed, 0);
+                this.play(`move-${level}-${Direction.LEFT}`, true);
+                break;
+            case Direction.RIGHT:
+                if (prevVelocityX === 0) this.y = Math.round(this.y / this.gridSize) * this.gridSize;
+                this.setVelocity(speed, 0);
+                this.play(`move-${level}-${Direction.RIGHT}`, true);
+                break;
+            default:
+                if (this.checkIfOnIce()) {
+                    this.applyInertia();
+                } else {
+                    this.setVelocity(0, 0);
+                    this.anims.stop();
+                }
         }
+    }
 
+    checkIfOnIce() {
+        return this.scene.physics.overlap(this, this.scene.builderManager.decor.ice);
     }
 
     applyInertia() {
@@ -130,47 +225,13 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    move() {
-        const level = this.level;
-        const speed = this.speed;
-        const prevVelocityX = this.body.velocity.x;
-        const prevVelocityY = this.body.velocity.y;
-
-
-        if (this.moveUpKey.isDown) {
-            if (prevVelocityY === 0) this.x = Math.round(this.x / this.gridSize) * this.gridSize;
-            this.setVelocity(0, -speed);
-            this.lastDir = Direction.UP;
-            this.play(`move-${level}-${Direction.UP}`, true);
-        } else if (this.moveDownKey.isDown) {
-            if (prevVelocityY === 0) this.x = Math.round(this.x / this.gridSize) * this.gridSize;
-            this.setVelocity(0, speed);
-            this.lastDir = Direction.DOWN;
-            this.play(`move-${level}-${Direction.DOWN}`, true);
-        } else if (this.moveLeftKey.isDown) {
-            if (prevVelocityX === 0) this.y = Math.round(this.y / this.gridSize) * this.gridSize;
-            this.setVelocity(-speed, 0);
-            this.lastDir = Direction.LEFT;
-            this.play(`move-${level}-${Direction.LEFT}`, true);
-        } else if (this.moveRightKey.isDown) {
-            if (prevVelocityX === 0) this.y = Math.round(this.y / this.gridSize) * this.gridSize;
-            this.setVelocity(speed, 0);
-            this.lastDir = Direction.RIGHT;
-            this.play(`move-${level}-${Direction.RIGHT}`, true);
-        } else {
-            this.anims.stop();
-        }
-    }
-
-    checkIfOnIce() {
-        return this.scene.physics.overlap(this, this.scene.builderManager.decor.ice);
-    }
-
     // MOVEMENT END
 
     // ATTACK
     handleAttack() {
-        if (Phaser.Input.Keyboard.JustDown(this.attackKey)) {
+        const pad = this.scene.input.gamepad ? this.scene.input.gamepad.getPad(0) : null;
+
+        if (this.attackKey.isDown || (pad && pad.buttons[1]?.pressed)) {
             const activeBullets = this.findActiveBullets().length;
             if (activeBullets < this.maxBullets) {
                 this.fireBullet();
@@ -179,7 +240,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     findActiveBullets() {
-        const { bulletsManager } = this.scene;
+        const {bulletsManager} = this.scene;
         return bulletsManager.group.getChildren().filter(b => b.active && b.ownerType === ParticipantType.PLAYER)
     }
 
@@ -187,6 +248,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         if (!this || !this.active) return;
         this.scene.bulletsManager.add(this, ParticipantType.PLAYER, this.bulletSpeed, this.canBreakSteel);
     }
+
     // ATTACK END
 
     // VISUALS
@@ -199,6 +261,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.shieldSprite.copyPosition(this);
         this.shieldSprite.setVisible(true);
     }
+
     // VISUALS END
 
     // BONUS LOGIC
@@ -206,14 +269,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         if (this.level < 3) {
             this.level++;
             this.applyLevelSettings();
-            console.log(`Уровень повышен до: ${this.level}`);
         }
     }
 
     upMaxLevel() {
         this.level = 3;
         this.applyLevelSettings();
-        console.log(`Уровень повышен до: ${this.level}`);
     }
 
     addTry() {
@@ -248,7 +309,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.live--;
 
-        const explosion = scene.add.sprite(x, y, 'spritesheet_16x16');
+        const explosion = scene.add.sprite(x, y, Atlas16);
         explosion.setBlendMode(Phaser.BlendModes.SCREEN);
 
         explosion.play('explosion');
@@ -266,6 +327,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             scene.events.emit(GamepadEvents.GAME_OVER);
         }
     }
+
     // DAMAGE LOGIC END
 
     disableShield() {

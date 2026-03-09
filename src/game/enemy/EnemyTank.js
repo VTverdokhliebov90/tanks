@@ -1,4 +1,5 @@
 import {
+    Atlas16,
     Depth,
     Direction,
     EnemyHealthColorMap,
@@ -9,7 +10,7 @@ import {
 
 export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, tankLevel = EnemyLevels.ONE) {
-        super(scene, x, y, 'spritesheet_16x16', tankLevel.frame);
+        super(scene, x, y, Atlas16, tankLevel.frame);
         this.scene = scene;
         scene.add.existing(this);
         scene.physics.add.existing(this);
@@ -206,7 +207,7 @@ export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
         const {x, y, scene} = this;
         if (scene) {
             this.disableEnemy();
-            const explosion = scene.add.sprite(x, y, 'spritesheet_16x16');
+            const explosion = scene.add.sprite(x, y, Atlas16);
             explosion.play(GameAnimations.EXPLOSION);
             explosion.on(GameAnimations.ANIMATIONCOMPLETE, () => {
                 explosion.destroy();

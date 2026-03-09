@@ -1,5 +1,5 @@
 import EnemyTank from './EnemyTank.js';
-import {EnemySpawnPoints, EnemyConfig, EnemyLevels, GameEvents, GameAnimations} from '../Constants.js';
+import {EnemySpawnPoints, EnemyConfig, EnemyLevels, GameEvents, GameAnimations, Atlas16} from '../Constants.js';
 
 export default class EnemyManager {
     constructor(scene) {
@@ -38,8 +38,6 @@ export default class EnemyManager {
 
     initEventListeners() {
         this.scene.events.on(GameEvents.ENEMY_DIE, () => {
-            console.log("ACTIVE " + this.findActiveEnemies());
-            console.log("RESERVED " + this.reservEmount);
             if (this.findActiveEnemies() <= 0 && this.reservEmount <= 0) {
                 this.scene.events.emit(GameEvents.LEVEL_COMPLETE);
             }
@@ -59,7 +57,7 @@ export default class EnemyManager {
     }
 
     spawnWithAnimation(spawnPoint) {
-        const spawnStar = this.scene.add.sprite(spawnPoint.x, spawnPoint.y, 'spritesheet_16x16');
+        const spawnStar = this.scene.add.sprite(spawnPoint.x, spawnPoint.y, Atlas16);
         spawnStar.play(GameAnimations.SPAWN_STAR);
         spawnStar.on(GameAnimations.ANIMATIONCOMPLETE, () => {
             const tankType = Phaser.Utils.Array.GetRandom(Object.values(EnemyLevels));

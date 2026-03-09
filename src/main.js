@@ -13,11 +13,14 @@ new Phaser.Game({
         antialias: false
     },
     scale: {
-        mode: Phaser.Scale.FIT, // Растягивает игру пропорционально, чтобы она влезла в экран
+        mode: Phaser.Scale.FIT,
         parent: 'game-container',
         width: WindowConfig.width,
         height: WindowConfig.height,
-        autoCenter: Phaser.Scale.FIT  // Центрирует канвас в браузере
+        autoCenter: Phaser.Scale.FIT
+    },
+    input: {
+        gamepad: true
     },
     scene: [StartScene, MainScene, VictoryScene],
 });

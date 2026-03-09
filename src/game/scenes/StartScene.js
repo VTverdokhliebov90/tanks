@@ -2,11 +2,11 @@ import Phaser from "phaser";
 
 export default class StartScene extends Phaser.Scene {
     constructor() {
-        super({ key: 'StartScene' });
+        super({key: 'StartScene'});
     }
 
     create() {
-        const { width, height } = this.scale;
+        const {width, height} = this.scale;
 
         this.add.text(width / 2, height / 3, 'BATTLE CITY\nREMASTER', {
             fontSize: '42px',
@@ -50,8 +50,16 @@ export default class StartScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         this.input.keyboard.once('keydown-SPACE', () => {
+            // this.input.gamepad.removeAllListeners();
             this.scene.start('MainScene');
         });
+
+        this.input.gamepad.on('down', (pad, button, index) => {
+            if (button.index === 9) {
+                this.scene.start('MainScene');
+            }
+        });
+
     }
 
 }

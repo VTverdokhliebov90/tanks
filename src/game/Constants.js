@@ -1,3 +1,5 @@
+export const Atlas16 = 'spritesheet_16x16';
+export const Atlas08 = 'spritesheet_8x8';
 export const GameEvents = {
     WORLDBOUNDS: 'worldbounds',
     PLAYER_ADD_TRY: 'player-add-try',
@@ -80,6 +82,7 @@ export const Depth = {
 };
 
 export const Direction = {
+    NONE: 'none',
     UP: 'up',
     DOWN: 'down',
     LEFT: 'left',

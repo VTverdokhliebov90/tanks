@@ -1,4 +1,4 @@
-import {Direction, EnemyLevels, PlayerLevels} from "./Constants";
+import {Atlas16, Direction, EnemyLevels, PlayerLevels} from "./Constants";
 
 export default class AnimationManager {
     static init(scene) {
@@ -21,7 +21,7 @@ export default class AnimationManager {
                 if (!scene.anims.exists(`move-${value.level}-${dir.key}`)) {
                     scene.anims.create({
                         key: `move-${value.level}-${dir.key}`,
-                        frames: scene.anims.generateFrameNumbers('spritesheet_16x16', {
+                        frames: scene.anims.generateFrameNumbers(Atlas16, {
                             start: value.frame + dir.start,
                             end: value.frame + dir.end
                         }),
@@ -38,7 +38,7 @@ export default class AnimationManager {
                 if (!scene.anims.exists(`moveEnemy-${value.level}-${dir.key}`)) {
                     scene.anims.create({
                         key: `moveEnemy-${value.level}-${dir.key}`,
-                        frames: scene.anims.generateFrameNumbers('spritesheet_16x16', {
+                        frames: scene.anims.generateFrameNumbers(Atlas16, {
                             start: value.frame + dir.start,
                             end: value.frame + dir.end
                         }),
@@ -53,7 +53,7 @@ export default class AnimationManager {
         if (!scene.anims.exists('explosion')) {
             scene.anims.create({
                 key: 'explosion',
-                frames: scene.anims.generateFrameNumbers('spritesheet_16x16', {start: 216, end: 218}), // пример кадров
+                frames: scene.anims.generateFrameNumbers(Atlas16, {start: 216, end: 218}), // пример кадров
                 frameRate: 15,
                 hideOnComplete: true
             });
@@ -62,7 +62,7 @@ export default class AnimationManager {
         if (!scene.anims.exists('spawn-star')) {
             scene.anims.create({
                 key: 'spawn-star',
-                frames: scene.anims.generateFrameNumbers('spritesheet_16x16', {start: 166, end: 169}), // проверь индексы звезды
+                frames: scene.anims.generateFrameNumbers(Atlas16, {start: 166, end: 169}), // проверь индексы звезды
                 frameRate: 10,
                 repeat: 3
             });
@@ -70,7 +70,7 @@ export default class AnimationManager {
         if (!scene.anims.exists('shield-loop')) {
             scene.anims.create({
                 key: 'shield-loop',
-                frames: scene.anims.generateFrameNumbers('spritesheet_16x16', {start: 241, end: 242}),
+                frames: scene.anims.generateFrameNumbers(Atlas16, {start: 241, end: 242}),
                 frameRate: 20,
                 repeat: -1
             });

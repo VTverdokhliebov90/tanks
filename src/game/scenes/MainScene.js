@@ -5,7 +5,7 @@ import {
     BaseProps,
     WindowConfig,
     StatsPane,
-    GameEvents, Scenes,
+    GameEvents, Scenes, Atlas16, Atlas08,
 } from "../Constants";
 import Player from '../Player.js';
 import AnimationManager from '../Animations.js';
@@ -26,12 +26,12 @@ export default class MainScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.spritesheet('spritesheet_16x16', 'assets/tanks_sheet.png', {
+        this.load.spritesheet(Atlas16, 'assets/tanks_sheet.png', {
             frameWidth: 16,
             frameHeight: 16
         });
 
-        this.load.spritesheet('spritesheet_8x8', 'assets/tanks_sheet.png', {
+        this.load.spritesheet(Atlas08, 'assets/tanks_sheet.png', {
             frameWidth: 8,
             frameHeight: 8,
             marginTop: 0

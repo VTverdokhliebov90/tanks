@@ -1,9 +1,9 @@
 import Phaser from 'phaser';
-import {Depth, Direction, GameConfig} from "../Constants";
+import {Atlas16, Depth, Direction, GameConfig} from "../Constants";
 
 export default class Bullet extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, direction, ownerType, speed = GameConfig.BULLET_SPEED, canBreakSteel) {
-        super(scene, x, y, 'spritesheet_16x16', `bullet_frame_${direction}`);
+        super(scene, x, y, Atlas16, `bullet_frame_${direction}`);
         this.setBlendMode(Phaser.BlendModes.SCREEN);
 
         this.setDepth(Depth.TANK);
