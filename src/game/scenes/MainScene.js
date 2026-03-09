@@ -63,7 +63,7 @@ export default class MainScene extends Phaser.Scene {
         // START
         this.loadNextLevel();
 
-        this.testGenerateBonuses();
+        // this.testGenerateBonuses();
 
     }
 
