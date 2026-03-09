@@ -76,15 +76,12 @@ export default class EnemyManager {
     freezeAllEnemies(freezeTime = EnemyConfig.ENEMY_FREEZE_TIME) {
         this.isFrozen = true;
 
-        // 1. Очищаем старый таймер, если он был
         if (this.freezeTimer) this.freezeTimer.remove();
 
-        // 2. Фризим текущих
         this.group.getChildren().forEach(enemy => {
             if (enemy.active) enemy.freeze();
         });
 
-        // 3. Создаем новый таймер (используем delayedCall — это проще)
         this.freezeTimer = this.scene.time.delayedCall(freezeTime, () => {
             this.unfreezeAllEnemies();
         }, [], this);
