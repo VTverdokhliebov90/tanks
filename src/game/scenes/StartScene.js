@@ -8,7 +8,6 @@ export default class StartScene extends Phaser.Scene {
     create() {
         const { width, height } = this.scale;
 
-        // 1. Логотип
         this.add.text(width / 2, height / 3, 'BATTLE CITY\nREMASTER', {
             fontSize: '42px',
             fill: '#fff',
@@ -17,7 +16,6 @@ export default class StartScene extends Phaser.Scene {
             fontWeight: 'bold'
         }).setOrigin(0.5);
 
-        // 2. Инструкция (Кнопка старта)
         const startText = this.add.text(width / 2, height / 1.6, 'PRESS SPACE TO START', {
             fontSize: '20px',
             fill: '#ff0',
@@ -32,7 +30,6 @@ export default class StartScene extends Phaser.Scene {
             loop: -1
         });
 
-        // 3. ПОДСКАЗКА ПО УПРАВЛЕНИЮ (Новый блок)
         this.add.text(width / 2, height / 1.35, 'W,A,S,D - MOVE | SPACE - FIRE', {
             fontSize: '16px',
             fill: '#0f0', // Зеленый цвет, чтобы выделялось
@@ -41,7 +38,6 @@ export default class StartScene extends Phaser.Scene {
             strokeThickness: 3
         }).setOrigin(0.5);
 
-        // 4. Копирайты
         this.add.text(width / 2, height - 80, 'Developed by Влад', {
             fontSize: '16px',
             fill: '#888'

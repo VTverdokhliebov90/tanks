@@ -97,17 +97,6 @@ export default class MainScene extends Phaser.Scene {
                 this.time.delayedCall(GameConfig.LEVEL_START_DELAY, () => this.loadNextLevel());
             }
         });
-
-        // this.events.on(GameEvents.GAME_COMPLETE, () => {
-        //     this.physics.pause();
-        //     this.currentText = this.add.text(WindowConfig.width / 2, WindowConfig.height / 2, 'LEVEL COMPLETE', {
-        //         fontSize: '64px',
-        //         fill: '#f00',
-        //         fontStyle: 'bold'
-        //     }).setOrigin(0.5);
-        //
-        //     this.time.delayedCall(GameConfig.LEVEL_START_DELAY, () => this.showStartScene(Scenes.GAME_VICTORY_SCENE));
-        // });
     }
 
     loadNextLevel() {
