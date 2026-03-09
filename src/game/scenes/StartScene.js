@@ -17,9 +17,11 @@ export default class StartScene extends Phaser.Scene {
             fontWeight: 'bold'
         }).setOrigin(0.5);
 
-        const startText = this.add.text(width / 2, height / 1.5, 'PRESS SPACE TO START', {
+        // 2. Инструкция (Кнопка старта)
+        const startText = this.add.text(width / 2, height / 1.6, 'PRESS SPACE TO START', {
             fontSize: '20px',
-            fill: '#ff0'
+            fill: '#ff0',
+            fontFamily: 'monospace'
         }).setOrigin(0.5);
 
         this.tweens.add({
@@ -30,6 +32,16 @@ export default class StartScene extends Phaser.Scene {
             loop: -1
         });
 
+        // 3. ПОДСКАЗКА ПО УПРАВЛЕНИЮ (Новый блок)
+        this.add.text(width / 2, height / 1.35, 'W,A,S,D - MOVE | SPACE - FIRE', {
+            fontSize: '16px',
+            fill: '#0f0', // Зеленый цвет, чтобы выделялось
+            fontFamily: 'monospace',
+            stroke: '#c12e2e',
+            strokeThickness: 3
+        }).setOrigin(0.5);
+
+        // 4. Копирайты
         this.add.text(width / 2, height - 80, 'Developed by Влад', {
             fontSize: '16px',
             fill: '#888'
@@ -45,4 +57,5 @@ export default class StartScene extends Phaser.Scene {
             this.scene.start('MainScene');
         });
     }
+
 }

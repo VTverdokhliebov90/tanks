@@ -40,6 +40,7 @@ export default class MainScene extends Phaser.Scene {
     }
 
     create() {
+        this.input.keyboard.addCapture('W,A,S,D,SPACE');
         this.physics.world.setBounds(0, 0, WindowConfig.width - StatsPane.width, WindowConfig.height);
 
         TextureManager.init(this);
