@@ -23,7 +23,7 @@ export default class UIManager {
             this.updateLives();
         });
 
-        this.scene.events.on(GameEvents.PLAYER_LOOSE_TRY, (player) => {
+        this.scene.events.on(GameEvents.PLAYER_LOOSE_TRY, () => {
             this.currentPlayerTries--;
             this.updateLives();
         });

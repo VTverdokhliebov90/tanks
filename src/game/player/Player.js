@@ -356,7 +356,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     handlePlayerDeath() {
-        const {x, y, scene, index} = this;
+        const {x, y, scene} = this;
 
         this.playerTries--;
         this.disablePlayer();

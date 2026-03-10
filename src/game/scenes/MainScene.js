@@ -5,9 +5,11 @@ import {
     BaseProps,
     WindowConfig,
     StatsPane,
-    GameEvents, Scenes, Atlas16, Atlas08, PlayersConfig,
+    GameEvents,
+    Scenes,
+    Atlas16,
+    Atlas08,
 } from "../Constants";
-import Player from '../player/Player.js';
 import AnimationManager from '../Animations.js';
 import TextureManager from '../TextureManager.js';
 import BulletsManager from '../bullet/BulletsManager.js';
