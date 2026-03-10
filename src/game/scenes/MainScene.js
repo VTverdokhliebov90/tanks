@@ -5,9 +5,11 @@ import {
     BaseProps,
     WindowConfig,
     StatsPane,
-    GameEvents, Scenes, Atlas16, Atlas08, PlayersConfig,
+    GameEvents,
+    Scenes,
+    Atlas16,
+    Atlas08,
 } from "../Constants";
-import Player from '../player/Player.js';
 import AnimationManager from '../Animations.js';
 import TextureManager from '../TextureManager.js';
 import BulletsManager from '../bullet/BulletsManager.js';
@@ -28,9 +30,7 @@ export default class MainScene extends Phaser.Scene {
 
     // StartScene data
     init(data) {
-        // Сохраняем количество игроков, если данных нет — по умолчанию 1
         this.playersCount = data.players || 1;
-        console.log('Количество игроков:', this.playersCount);
     }
 
     preload() {
@@ -61,8 +61,8 @@ export default class MainScene extends Phaser.Scene {
         this.bulletsManager = new BulletsManager(this);
         this.bonusManager = new BonusManager(this);
         this.enemyManager = new EnemyManager(this);
-        this.collisionManager = new CollisionManager(this);
         this.playerManager = new PlayerManager(this);
+        this.collisionManager = new CollisionManager(this);
 
         this.base = new Base(this, BaseProps.spawnPoint);
 
@@ -75,7 +75,7 @@ export default class MainScene extends Phaser.Scene {
         // START
         this.loadNextLevel();
 
-        this.testGenerateBonuses();
+        // this.testGenerateBonuses();
 
     }
 

@@ -1,49 +1,68 @@
 import {
     Atlas16,
     Depth,
-    Direction,
+    Direction, EnemyConfig,
     EnemyHealthColorMap,
     EnemyLevels, GameAnimations,
     GameEvents as GamepadEvents,
     GameEvents, ParticipantType
 } from '../Constants.js';
+import Phaser from "phaser";
 
 export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, tankLevel = EnemyLevels.ONE) {
+    constructor(scene, x, y, tankLevel = EnemyLevels[0]) {
         super(scene, x, y, Atlas16, tankLevel.frame);
         this.scene = scene;
+
         scene.add.existing(this);
         scene.physics.add.existing(this);
-        scene.events.on(GameEvents.GRENADE_ENEMIES, () => {
-            this.kill();
-        })
 
-        this.maxBullets = 1;
-
-        this.setPushable(false);
-        this.body.setCollideWorldBounds(true);
-        this.body.onWorldBounds = true;
-
-        this.setDepth(Depth.TANK);
-        this.initType(tankLevel)
-
-        this.isFrozen = false;
-
-        this.moveTimer = 0;
-
-        this.nextShotTime = 0;
+        // STATIC
         this.bulletSpeed = tankLevel.bulletSpeed;
         this.movementDirection = Direction.DOWN;
         this.orientation = Direction.DOWN;
-
-        this.fireDelay = 2000;
+        this.fireDelay = EnemyConfig.FIRE_DELAY;
+        this.maxBullets = 1;
+        // DYNAMIC
+        this.moveTimer = 0;
+        this.isFrozen = false;
         this.lastFireTime = 0;
+        this.currentBulletsCount = 0;
+
+        // INITIALISATION
+        this.body.setCollideWorldBounds(true);
+        this.body.onWorldBounds = true;
+
+        this.setBlendMode(Phaser.BlendModes.SCREEN);
+        this.setDepth(Depth.TANK);
+        this.setPushable(false);
+        this.initLevel(tankLevel)
+        this.initListeners();
 
         this.move();
 
     }
 
-    initType(tankLevel) {
+    initListeners() {
+        this.scene.events.on(GameEvents.GRENADE_ENEMIES, this.kill, this);
+        this.attackTimer = this.scene.time.addEvent({
+            delay: 200,
+            callback: this.handleAttack,
+            callbackScope: this,
+            loop: true
+        });
+        this.once('destroy', () => {
+            // Отписываемся от глобального события сцены
+            this.scene.events.off(GameEvents.GRENADE_ENEMIES, this.kill, this);
+
+            // Останавливаем и удаляем таймер
+            if (this.attackTimer) {
+                this.attackTimer.destroy();
+            }
+        });
+    }
+
+    initLevel(tankLevel) {
         this.tankLevel = tankLevel;
         this.maxHealth = Phaser.Math.Between(tankLevel.hpRange[0], tankLevel.hpRange[1]);
         this.health = this.maxHealth;
@@ -66,7 +85,6 @@ export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
 
     update(time) {
         this.handleMovement(time);
-        this.handleAttack();
     }
 
     // MOVEMENT LOGIC
@@ -121,7 +139,8 @@ export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
 
     getRandomDirection() {
         const directionsSet = [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT];
-        return directionsSet[Phaser.Math.Between(0, 3)];
+        const possible = directionsSet.filter(d => d !== this.movementDirection);
+        return Phaser.Utils.Array.GetRandom(possible);
     }
 
     // MOVEMENT LOGIC END
@@ -129,7 +148,9 @@ export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
     // FIRE LOGIC
 
     handleAttack() {
-        const { playerManager, base } = this.scene;
+        if (!this.scene || !this.active) return;
+
+        const {playerManager, base} = this.scene;
         // const player = Phaser.Utils.Array.GetRandom(playerManager.group.getChildren());
         const targets = [base, ...playerManager.group.getChildren()];
 
@@ -145,7 +166,6 @@ export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
 
             if (isTargetAhead) {
                 this.fire();
-                // return;
             }
         }
 
@@ -157,33 +177,25 @@ export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
     fire() {
         const currentTime = this.scene.time.now;
         if (currentTime > this.lastFireTime + this.fireDelay && !this.isFrozen) {
-
-            const activeBullets = this.findActiveBullets().length;
-            if (activeBullets < this.maxBullets) {
+            if (this.currentBulletsCount < this.maxBullets) {
                 this.spawnBullet();
                 this.lastFireTime = currentTime;
             }
         }
-
-        // if (this.findActiveBullets().length < 1 && time > this.nextShotTime && !this.isFrozen) {
-        //     this.fireSmart();
-        //     this.nextShotTime = time + Phaser.Math.Between(1000, 1500);
-        // }
-        //
-        // if (this.findActiveBullets().length < 1) {
-        //     this.spawnBullet();
-        // }
     }
-
 
     spawnBullet() {
-        const {bulletsManager} = this.scene;
+        const { bulletsManager } = this.scene;
         const bullet = bulletsManager.add(this, ParticipantType.ENEMY);
-        if (bullet) bullet.shooter = this;
+        if (bullet) {
+            this.currentBulletsCount++;
+            bullet.shooter = this;
+        }
+        return bullet;
     }
 
-    canFire() {
-        return this.findActiveBullets().length < 1;
+    onBulletDestroyed() {
+        this.currentBulletsCount = Math.max(0, this.currentBulletsCount - 1);
     }
 
     // FIRE LOGIC END
@@ -219,17 +231,19 @@ export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
     }
 
     kill() {
+        if (!this.active) return;
+
         const {x, y} = this;
-        if (this.scene) {
-            this.setActive(false);
-            this.setVisible(false);
-            const explosion = this.scene.add.sprite(x, y, Atlas16);
-            explosion.play(GameAnimations.EXPLOSION);
-            explosion.on(GameAnimations.ANIMATIONCOMPLETE, () => {
-                explosion.destroy();
-            });
-            this.scene.events.emit(GameEvents.ENEMY_DIE, this);
-        }
+        this.setActive(false);
+        this.setVisible(false);
+        if (this.body) this.body.enable = false;
+
+        const explosion = this.scene.add.sprite(x, y, Atlas16);
+        explosion.play(GameAnimations.EXPLOSION);
+        explosion.on(GameAnimations.ANIMATIONCOMPLETE, () => {
+            explosion.destroy();
+        });
+        this.scene.events.emit(GameEvents.ENEMY_DIE, this);
     }
 
     freeze() {
@@ -242,10 +256,5 @@ export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
         this.isFrozen = false;
         this.anims.resume();
         this.move();
-    }
-
-    findActiveBullets() {
-        const {bulletsManager} = this.scene;
-        return bulletsManager.group.getChildren().filter(b => b.active && b.shooter === this)
     }
 }

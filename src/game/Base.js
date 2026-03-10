@@ -62,15 +62,14 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
         builderManager.createBlock(x, y, wallType);
     }
 
-    die() {
+    kill() {
         if (this.isDead) return;
         this.isDead = true;
-        // 1. Меняем кадр на взорванного орла
+
         this.setFrame(BaseProps.frame + 1);
 
-        // 2. Создаем большой взрыв
         const explosion = this.scene.add.sprite(this.x, this.y, Atlas16);
-        explosion.setScale(2); // База взрывается мощнее танка
+        explosion.setScale(2);
         explosion.setDepth(Depth.TANK + 1);
         explosion.play(GameAnimations.EXPLOSION);
         explosion.on(GameAnimations.ANIMATIONCOMPLETE, () => explosion.destroy());
@@ -80,14 +79,16 @@ export default class Base extends Phaser.Physics.Arcade.Sprite {
     }
 
     applyShovelBonus(duration = BaseProps.shovelTimer) {
+        const {scene, shovelTimer, endTimer } = this;
 
         this.stopShieldBlinking();
-        if (this.shovelTimer) this.shovelTimer.remove();
-        if (this.endTimer) this.endTimer.remove();
+
+        if (shovelTimer) shovelTimer.remove();
+        if (endTimer) endTimer.remove();
 
         this.updateShieldWallType(WallType.STEEL);
 
-        this.shovelTimer = this.scene.time.delayedCall(7000, () => {
+        this.shovelTimer = scene.time.delayedCall(7000, () => {
             this.startShieldBlinking();
         });
 

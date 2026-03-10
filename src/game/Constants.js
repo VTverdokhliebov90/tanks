@@ -54,6 +54,7 @@ export const BaseProps = {
 }
 
 export const GameConfig = {
+    BONUS_START_FRAME: 191,
     PLAYER_SPEED: 50,
     INITIAL_PLAYER_TRIES: 3,
     BULLET_SPEED: 150,
@@ -62,7 +63,6 @@ export const GameConfig = {
     PLAYER_SHIELD_DURATION: 10000,
     PLAYER_RESPAWN_DELAY: 2000,
     LEVEL_START_DELAY: 3000,
-    PLAYER_1_SPAWN_POINT: {x: (WindowConfig.width - StatsPane.width) / 2 - 16 - 16, y: WindowConfig.height - 8},
 };
 
 export const PlayersConfig = {
@@ -114,14 +114,15 @@ export const EnemyConfig = {
     MAX_ACTIVE_ENEMIES: 6,
     SPAWN_INTERVAL: 5000,
     ENEMY_FREEZE_TIME: 5000,
+    FIRE_DELAY: 2000,
 };
 
-export const EnemyLevels = {
-    ONE: {level: 0, frame: 108, speed: 50, bulletSpeed: 150, hpRange: [1, 1]},
-    TWO: {level: 1, frame: 133, speed: 90, bulletSpeed: 150, hpRange: [1, 1]},
-    THREE: {level: 2, frame: 158, speed: 60, bulletSpeed: 250, hpRange: [1, 2]},
-    FOUR: {level: 3, frame: 183, speed: 50, bulletSpeed: 150, hpRange: [3, 4]}
-}
+export const EnemyLevels = [
+    {level: 0, frame: 108, speed: 50, bulletSpeed: 150, hpRange: [1, 1]},
+    {level: 1, frame: 133, speed: 90, bulletSpeed: 150, hpRange: [1, 1]},
+    {level: 2, frame: 158, speed: 60, bulletSpeed: 250, hpRange: [1, 2]},
+    {level: 3, frame: 183, speed: 50, bulletSpeed: 150, hpRange: [3, 4]}
+]
 
 export const EnemyHealthColorMap = [
     0xFFFFFF,
@@ -141,10 +142,10 @@ export const BonusType = {
 };
 
 export const PlayerLevels = [
-    {level: 0, frame: [0,200], speed: 50, bulletSpeed: 150, maxBullets: 1, canBreakSteel: false},
-    {level: 1, frame: [25,225], speed: 65, bulletSpeed: 250, maxBullets: 1, canBreakSteel: false},
-    {level: 2, frame: [50,250], speed: 65, bulletSpeed: 250, maxBullets: 2, canBreakSteel: false},
-    {level: 3, frame: [75,275], speed: 75, bulletSpeed: 300, maxBullets: 2, canBreakSteel: true}
+    {level: 0, frame: [0, 200], speed: 50, bulletSpeed: 150, maxBullets: 1, canBreakSteel: false},
+    {level: 1, frame: [25, 225], speed: 65, bulletSpeed: 250, maxBullets: 1, canBreakSteel: false},
+    {level: 2, frame: [50, 250], speed: 65, bulletSpeed: 250, maxBullets: 2, canBreakSteel: false},
+    {level: 3, frame: [75, 275], speed: 75, bulletSpeed: 300, maxBullets: 2, canBreakSteel: true}
 ];
 
 export const ParticipantType = {

@@ -1,5 +1,5 @@
 import Bullet from './Bullet';
-import {Atlas16, Depth, Direction, GameAnimations, GameConfig, GameEvents} from '../Constants.js';
+import {Direction, GameConfig, GameEvents} from '../Constants.js';
 
 export default class BulletsManager {
     constructor(scene) {
@@ -13,9 +13,10 @@ export default class BulletsManager {
     }
 
     initEventListeners(scene) {
-        scene.physics.world.on(GameEvents.WORLDBOUNDS, (body) => {
-            if (body.gameObject && body.gameObject instanceof Bullet) {
-                body.gameObject.destroy();
+        scene.physics.world.on('worldbounds', (body) => {
+            const bullet = body.gameObject;
+            if (bullet && bullet instanceof Bullet && typeof bullet.killBullet === 'function') {
+                bullet.killBullet(); // Вызываем красивое уничтожение со взрывом
             }
         });
     }
@@ -26,7 +27,9 @@ export default class BulletsManager {
         const actualX = this.getActualX(x, orientation);
         const actualY = this.getActualY(y, orientation);
 
-        return new Bullet(this.scene, actualX, actualY, orientation, ownerType, speed, canBreakSteel);
+        const bullet = new Bullet(this.scene, actualX, actualY, orientation, ownerType, speed, canBreakSteel, shooter);
+        // this.group.add(bullet);
+        return bullet;
     }
 
     getActualX(x, direction) {

@@ -15,7 +15,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         super(scene, spawnPoint.x, spawnPoint.y, Atlas16, tankLevel.frame[playerIndex]);
 
         //STATIC DATA
-        this.setDepth(Depth.TANK);
         this.index = index;
         this.spawnPoint = spawnPoint;
         this.gridSize = 8;
@@ -28,6 +27,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.playerLevel = tankLevel.level;
         this.isShielded = false;
         this.lastFireTime = 0;
+        this.currentBulletsCount = 0;
 
         // KEYBOARD CONTROLS
         if (this.index === 0) {
@@ -47,6 +47,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         // INITIALIZATION
         scene.add.existing(this);
         scene.physics.add.existing(this);
+        this.setDepth(Depth.TANK);
+        this.setBlendMode(Phaser.BlendModes.SCREEN);
         this.setCollideWorldBounds(true);
         this.setPushable(false);
 
@@ -54,10 +56,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         this.applyPlayerLevelSettings();
         this.disablePlayer();
-
-        // this.scene.input.gamepad.gamepads.forEach((pad, index) => {
-        //     console.log(`Pad index ${index}: ${pad.id}`);
-        // });
 
     }
 
@@ -77,46 +75,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     update() {
         this.handlePlayerInputs();
-        // this.testPad();
         this.handleMovement();
         this.handleAttack();
         this.handleShieldVisual();
 
         if (this.movementDirection !== Direction.NONE) {
             this.orientation = this.movementDirection;
-        }
-    }
-
-    testPad() {
-
-        const pad = this.scene.input.gamepad.getPad(1);
-        if (pad) {
-            pad.buttons.forEach((b, i) => { if(b.pressed) console.log('Button:', i) });
-            pad.axes.forEach((a, i) => { if(Math.abs(a) > 0.5) console.log('Axis:', i, 'Value:', a) });
-        }
-        if (pad) {
-            // 1. Проверяем все кнопки. Если увидишь индекс с pressed: true — это твоя кнопка.
-            // pad.buttons.forEach((btn, index) => {
-            //     if (btn.pressed) console.log(`Нажата кнопка №${index}`);
-            // });
-
-            // 2. Проверяем все оси. Если при нажатии D-pad меняется число — это ось.
-            // pad.axes.forEach((axis, index) => {
-            //     if (
-            //         index !== 0
-            //         // && index !==1
-            //         && index !== 2
-            //         && index !== 3
-            //         && index !== 4
-            //         && index !== 5
-            //         && index !== 6
-            //         && index !== 7
-            //         && index !== 8
-            //         && index !== 9
-            //         && (Math.abs(axis.value) > 0.2 || (Math.abs(axis.value) < -0.2))
-            //     )
-            //         console.log(`Ось №${index} изменилась: ${axis.value}`);
-            // });
         }
     }
 
@@ -141,8 +105,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
     handlePadInputs() {
         const pad = this.scene.input.gamepad ? this.scene.input.gamepad.getPad(this.index) : null;
-        // console.log("Connected pads:", this.scene.input.gamepad.total);
-        // if (this.index === 1) console.log(pad)
         if (!pad || !pad.axes) return;
 
         const hatValue = pad.axes[9] ? pad.axes[9].value : 0;
@@ -160,7 +122,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         if (this.movementDirection !== Direction.NONE) {
-            // console.log("Current Direction:", this.currentDirection);
         }
     }
 
@@ -281,30 +242,22 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
 
         if (isFirePressed) {
             if (currentTime > this.lastFireTime + this.fireDelay) {
-                const activeBullets = this.findActiveBullets().length;
 
-                if (activeBullets < this.maxBullets) {
-                    this.fireBullet();
+                if (this.currentBulletsCount < this.maxBullets) {
+                    this.spawnBullet();
                     this.lastFireTime = currentTime; // Запоминаем время выстрела
                 }
             }
         }
-
-        // if (this.attackKey.isDown || (pad && pad.buttons[1]?.pressed)) {
-        //     const activeBullets = this.findActiveBullets().length;
-        //     if (activeBullets < this.maxBullets) {
-        //         this.fireBullet();
-        //     }
-        // }
     }
 
-    findActiveBullets() {
-        const {bulletsManager} = this.scene;
-        return bulletsManager.group.getChildren().filter(b => b.active && b.ownerType === `${ParticipantType.PLAYER}-${this.index}`)
+    onBulletDestroyed() {
+        this.currentBulletsCount = Math.max(0, this.currentBulletsCount - 1);
     }
 
-    fireBullet() {
+    spawnBullet() {
         if (!this || !this.active) return;
+        this.currentBulletsCount++;
         this.scene.bulletsManager.add(this, `${ParticipantType.PLAYER}-${this.index}`, this.bulletSpeed, this.canBreakSteel);
     }
 
@@ -356,7 +309,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     }
 
     handlePlayerDeath() {
-        const {x, y, scene, index} = this;
+        const {x, y, scene} = this;
 
         this.playerTries--;
         this.disablePlayer();

@@ -22,7 +22,7 @@ export default class AnimationManager {
 
         Object.values(PlayerLevels).forEach((value) => {
             playerDirections.forEach(dir => {
-                if (!scene.anims.exists(`move-${value.playerIndex}-${value.level}-${dir.key}`)) {
+                if (!scene.anims.exists(`move-${dir.playerIndex}-${value.level}-${dir.key}`)) {
                     scene.anims.create(
                         {
                             key: `move-${dir.playerIndex}-${value.level}-${dir.key}`,
@@ -37,47 +37,50 @@ export default class AnimationManager {
             });
         });
 
-
-        Object.entries(EnemyLevels).forEach(([key, value]) => {
+        EnemyLevels.forEach(enemyLevelSettings => {
             enemyDirections.forEach(dir => {
-                if (!scene.anims.exists(`moveEnemy-${value.level}-${dir.key}`)) {
-                    scene.anims.create({
-                        key: `moveEnemy-${value.level}-${dir.key}`,
-                        frames: scene.anims.generateFrameNumbers(Atlas16, {
-                            start: value.frame + dir.start,
-                            end: value.frame + dir.end
-                        }),
-                        frameRate: 10,
-                        repeat: -1
-                    });
+                if (!scene.anims.exists(`moveEnemy-${enemyLevelSettings.level}-${dir.key}`)) {
+                    scene.anims.create(
+                        {
+                            key: `moveEnemy-${enemyLevelSettings.level}-${dir.key}`,
+                            frames: scene.anims.generateFrameNumbers(Atlas16, {
+                                start: enemyLevelSettings.frame + dir.start,
+                                end: enemyLevelSettings.frame + dir.end
+                            }),
+                            frameRate: 10,
+                            repeat: -1
+                        });
                 }
             });
         });
 
         if (!scene.anims.exists(GameAnimations.EXPLOSION)) {
-            scene.anims.create({
-                key: GameAnimations.EXPLOSION,
-                frames: scene.anims.generateFrameNumbers(Atlas16, {start: 216, end: 218}), // пример кадров
-                frameRate: 15,
-                hideOnComplete: true
-            });
+            scene.anims.create(
+                {
+                    key: GameAnimations.EXPLOSION,
+                    frames: scene.anims.generateFrameNumbers(Atlas16, {start: 216, end: 218}),
+                    frameRate: 15,
+                    hideOnComplete: true
+                });
         }
 
         if (!scene.anims.exists(GameAnimations.SPAWN_STAR)) {
-            scene.anims.create({
-                key: GameAnimations.SPAWN_STAR,
-                frames: scene.anims.generateFrameNumbers(Atlas16, {start: 166, end: 169}), // проверь индексы звезды
-                frameRate: 10,
-                repeat: 3
-            });
+            scene.anims.create(
+                {
+                    key: GameAnimations.SPAWN_STAR,
+                    frames: scene.anims.generateFrameNumbers(Atlas16, {start: 166, end: 169}),
+                    frameRate: 10,
+                    repeat: 3
+                });
         }
         if (!scene.anims.exists(GameAnimations.SHIELD_LOOP)) {
-            scene.anims.create({
-                key: GameAnimations.SHIELD_LOOP,
-                frames: scene.anims.generateFrameNumbers(Atlas16, {start: 241, end: 242}),
-                frameRate: 20,
-                repeat: -1
-            });
+            scene.anims.create(
+                {
+                    key: GameAnimations.SHIELD_LOOP,
+                    frames: scene.anims.generateFrameNumbers(Atlas16, {start: 241, end: 242}),
+                    frameRate: 20,
+                    repeat: -1
+                });
         }
     }
 }

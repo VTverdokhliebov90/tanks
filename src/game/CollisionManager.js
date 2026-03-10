@@ -60,7 +60,7 @@ export default class CollisionManager {
 
     handleBaseBulletCollision(base, bullet) {
         bullet.killBullet();
-        base.die();
+        base.kill();
     }
 
     handlePlayerBulletCollision(player, bullet) {
@@ -77,7 +77,6 @@ export default class CollisionManager {
 
     handlePlayerBonusCollision(player, bonus) {
         bonus.pickUpBonus(player);
-        bonus.destroy();
     }
 
 }

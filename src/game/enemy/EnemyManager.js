@@ -38,8 +38,6 @@ export default class EnemyManager {
 
     initEventListeners() {
         this.scene.events.on(GameEvents.ENEMY_DIE, (enemy) => {
-            enemy.setActive(false);
-            enemy.setVisible(false);
             const activeCount = this.findActiveEnemies();
 
             if (activeCount <= 0 && this.reservEmount <= 0) {
@@ -65,8 +63,8 @@ export default class EnemyManager {
         const spawnStar = this.scene.add.sprite(spawnPoint.x, spawnPoint.y, Atlas16);
         spawnStar.play(GameAnimations.SPAWN_STAR);
         spawnStar.on(GameAnimations.ANIMATIONCOMPLETE, () => {
-            const tankType = Phaser.Utils.Array.GetRandom(Object.values(EnemyLevels));
-            const enemy = this.group.get(spawnPoint.x, spawnPoint.y, tankType);
+            const enemyLevel = Phaser.Utils.Array.GetRandom(EnemyLevels);
+            const enemy = this.group.get(spawnPoint.x, spawnPoint.y, enemyLevel);
             if (enemy) {
                 if (this.isFrozen) enemy.freeze();
                 else enemy.changeDirection();
@@ -100,6 +98,9 @@ export default class EnemyManager {
     }
 
     findActiveEnemies() {
+        if (!this.group || !this.group.children || typeof this.group.children.size === 'undefined') {
+            return 0;
+        }
         return this.group.countActive(true);
     }
 
