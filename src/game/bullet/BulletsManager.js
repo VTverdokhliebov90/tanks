@@ -1,5 +1,5 @@
 import Bullet from './Bullet';
-import {Direction, GameConfig, GameEvents} from '../Constants.js';
+import {Atlas16, Depth, Direction, GameAnimations, GameConfig, GameEvents} from '../Constants.js';
 
 export default class BulletsManager {
     constructor(scene) {
@@ -21,18 +21,12 @@ export default class BulletsManager {
     }
 
     add(shooter, ownerType, speed = GameConfig.BULLET_SPEED, canBreakSteel = false) {
-        const x = shooter.x;
-        const y = shooter.y;
+        const {x, y, orientation} = shooter;
 
-        let direction = Direction.UP;
-        if (shooter.anims && shooter.anims.currentAnim) {
-            direction = shooter.anims.currentAnim.key.split('-')[2];
-        }
+        const actualX = this.getActualX(x, orientation);
+        const actualY = this.getActualY(y, orientation);
 
-        const actualX = this.getActualX(x, direction);
-        const actualY = this.getActualY(y, direction);
-
-        return new Bullet(this.scene, actualX, actualY, direction, ownerType, speed, canBreakSteel);
+        return new Bullet(this.scene, actualX, actualY, orientation, ownerType, speed, canBreakSteel);
     }
 
     getActualX(x, direction) {

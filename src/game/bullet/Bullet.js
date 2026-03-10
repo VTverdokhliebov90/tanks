@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import {Atlas16, Depth, Direction, GameConfig} from "../Constants";
+import {Atlas16, Depth, Direction, GameAnimations, GameConfig} from "../Constants";
 
 export default class Bullet extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, direction, ownerType, speed = GameConfig.BULLET_SPEED, canBreakSteel) {
@@ -22,9 +22,9 @@ export default class Bullet extends Phaser.Physics.Arcade.Sprite {
     }
 
     setVelocityByDirection() {
-        if (!this.body) return; // Защита, если тело еще не создано
+        if (!this.body) return;
 
-        this.body.setAllowGravity(false); // На всякий случай выключаем гравитацию
+        this.body.setAllowGravity(false);
 
         switch (this.direction) {
             case Direction.UP:
@@ -40,5 +40,20 @@ export default class Bullet extends Phaser.Physics.Arcade.Sprite {
                 this.setVelocityX(this.speed);
                 break;
         }
+    }
+
+    killBullet() {
+        this.setVelocity(0, 0);
+        this.setActive(false);
+        this.setVisible(false);
+
+        const explosion = this.scene.add.sprite(this.x, this.y, Atlas16);
+        explosion.setDepth(Depth.TANK + 1);
+        explosion.play(GameAnimations.EXPLOSION);
+        explosion.on(GameAnimations.ANIMATIONCOMPLETE, () => {
+            explosion.destroy()
+        });
+
+        this.destroy();
     }
 }

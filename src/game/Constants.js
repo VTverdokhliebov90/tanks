@@ -17,6 +17,7 @@ export const GameAnimations = {
     ANIMATIONCOMPLETE: 'animationcomplete',
     SPAWN_STAR: 'spawn-star',
     EXPLOSION: 'explosion',
+    SHIELD_LOOP: 'shield-loop',
 }
 
 export const StatsPane = {
@@ -63,6 +64,19 @@ export const GameConfig = {
     LEVEL_START_DELAY: 3000,
     PLAYER_1_SPAWN_POINT: {x: (WindowConfig.width - StatsPane.width) / 2 - 16 - 16, y: WindowConfig.height - 8},
 };
+
+export const PlayersConfig = {
+    players: [
+        {
+            index: 0,
+            spawnPoint: {x: (WindowConfig.width - StatsPane.width) / 2 - 16 - 16, y: WindowConfig.height - 8}
+        },
+        {
+            index: 1,
+            spawnPoint: {x: (WindowConfig.width - StatsPane.width) / 2 + 16 + 16, y: WindowConfig.height - 8}
+        }
+    ]
+}
 
 export const WallType = {
     EMPTY: {frame: 50 * 9 - 1 - 17, mapSymbol: '.'},
@@ -127,10 +141,10 @@ export const BonusType = {
 };
 
 export const PlayerLevels = [
-    {level: 0, frame: 0, speed: 50, bulletSpeed: 150, maxBullets: 1, canBreakSteel: false},
-    {level: 1, frame: 25, speed: 65, bulletSpeed: 250, maxBullets: 1, canBreakSteel: false},
-    {level: 2, frame: 50, speed: 65, bulletSpeed: 250, maxBullets: 2, canBreakSteel: false},
-    {level: 3, frame: 75, speed: 75, bulletSpeed: 300, maxBullets: 2, canBreakSteel: true}
+    {level: 0, frame: [0,200], speed: 50, bulletSpeed: 150, maxBullets: 1, canBreakSteel: false},
+    {level: 1, frame: [25,225], speed: 65, bulletSpeed: 250, maxBullets: 1, canBreakSteel: false},
+    {level: 2, frame: [50,250], speed: 65, bulletSpeed: 250, maxBullets: 2, canBreakSteel: false},
+    {level: 3, frame: [75,275], speed: 75, bulletSpeed: 300, maxBullets: 2, canBreakSteel: true}
 ];
 
 export const ParticipantType = {

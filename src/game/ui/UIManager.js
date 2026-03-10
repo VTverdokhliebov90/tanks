@@ -5,11 +5,13 @@ export default class UIManager {
         this.scene = scene;
         this.enemyIcons = [];
 
-        this.currentPlayerTries = GameConfig.INITIAL_PLAYER_TRIES;
+        this.currentPlayerTries = GameConfig.INITIAL_PLAYER_TRIES * 2;
 
         this.createPanelBackground();
         this.createPlayerStats();
         this.createStageInfo();
+
+        this.initEnemyIcons();
 
         this.initEventListeners();
 
@@ -21,9 +23,14 @@ export default class UIManager {
             this.updateLives();
         });
 
-        this.scene.events.on(GameEvents.PLAYER_LOOSE_TRY, (availableTries) => {
-            this.currentPlayerTries = availableTries;
+        this.scene.events.on(GameEvents.PLAYER_LOOSE_TRY, (player) => {
+            this.currentPlayerTries--;
             this.updateLives();
+        });
+
+        this.scene.events.on(GameEvents.LEVEL_COMPLETE, () => {
+            this.currentPlayerTries = GameConfig.INITIAL_PLAYER_TRIES;
+            this.initEnemyIcons();
         });
 
         this.scene.events.on(GameEvents.ENEMY_SPAWNED, () => {

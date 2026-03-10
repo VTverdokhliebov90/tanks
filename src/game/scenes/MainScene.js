@@ -5,9 +5,9 @@ import {
     BaseProps,
     WindowConfig,
     StatsPane,
-    GameEvents, Scenes, Atlas16, Atlas08,
+    GameEvents, Scenes, Atlas16, Atlas08, PlayersConfig,
 } from "../Constants";
-import Player from '../Player.js';
+import Player from '../player/Player.js';
 import AnimationManager from '../Animations.js';
 import TextureManager from '../TextureManager.js';
 import BulletsManager from '../bullet/BulletsManager.js';
@@ -18,11 +18,19 @@ import BonusManager from "../bonus/BonusManager.js";
 import BuilderManager from "../builder/BuilderManager.js";
 import CollisionManager from "../CollisionManager.js";
 import StageManager from "../levels/StageManager.js";
+import PlayerManager from "../player/PlayerManager";
 
 export default class MainScene extends Phaser.Scene {
 
     constructor() {
         super('MainScene');
+    }
+
+    // StartScene data
+    init(data) {
+        // Сохраняем количество игроков, если данных нет — по умолчанию 1
+        this.playersCount = data.players || 1;
+        console.log('Количество игроков:', this.playersCount);
     }
 
     preload() {
@@ -47,7 +55,6 @@ export default class MainScene extends Phaser.Scene {
         AnimationManager.init(this);
 
         this.ui = new UIManager(this);
-        this.ui.initEnemyIcons();
 
         this.builderManager = new BuilderManager(this);
         this.stageManager = new StageManager(this);
@@ -55,8 +62,12 @@ export default class MainScene extends Phaser.Scene {
         this.bonusManager = new BonusManager(this);
         this.enemyManager = new EnemyManager(this);
         this.collisionManager = new CollisionManager(this);
-        this.player = new Player(this, GameConfig.PLAYER_1_SPAWN_POINT);
+        this.playerManager = new PlayerManager(this);
+
         this.base = new Base(this, BaseProps.spawnPoint);
+
+        this.playerManager.initPlayer(0);
+        if (this.playersCount > 1) this.playerManager.initPlayer(1);
 
         this.collisionManager.init();
         this.initSubscribers();
@@ -64,12 +75,8 @@ export default class MainScene extends Phaser.Scene {
         // START
         this.loadNextLevel();
 
-        // this.testGenerateBonuses();
+        this.testGenerateBonuses();
 
-    }
-
-    update(time, delta) {
-        this.player.update();
     }
 
     initSubscribers() {
@@ -101,8 +108,8 @@ export default class MainScene extends Phaser.Scene {
 
     loadNextLevel() {
         this.stageManager.initNextLevel();
+        this.playerManager.resetForNextLevel();
         this.base.reset();
-        this.player.spawn(false);
         this.enemyManager.run();
         if (this.currentText) {
             this.currentText.destroy();

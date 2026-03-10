@@ -1,12 +1,16 @@
-import {Atlas16, Direction, EnemyLevels, PlayerLevels} from "./Constants";
+import {Atlas16, Direction, EnemyLevels, GameAnimations, PlayerLevels} from "./Constants";
 
 export default class AnimationManager {
     static init(scene) {
         const playerDirections = [
-            {key: Direction.UP, start: 0, end: 1},
-            {key: Direction.LEFT, start: 2, end: 3},
-            {key: Direction.DOWN, start: 4, end: 5},
-            {key: Direction.RIGHT, start: 6, end: 7}
+            {playerIndex: 0, key: Direction.UP, start: 0, end: 1},
+            {playerIndex: 0, key: Direction.LEFT, start: 2, end: 3},
+            {playerIndex: 0, key: Direction.DOWN, start: 4, end: 5},
+            {playerIndex: 0, key: Direction.RIGHT, start: 6, end: 7},
+            {playerIndex: 1, key: Direction.UP, start: 0, end: 1},
+            {playerIndex: 1, key: Direction.LEFT, start: 2, end: 3},
+            {playerIndex: 1, key: Direction.DOWN, start: 4, end: 5},
+            {playerIndex: 1, key: Direction.RIGHT, start: 6, end: 7}
         ];
 
         const enemyDirections = [
@@ -16,18 +20,19 @@ export default class AnimationManager {
             {key: Direction.RIGHT, start: 6, end: 7}
         ];
 
-        Object.entries(PlayerLevels).forEach(([key, value]) => {
+        Object.values(PlayerLevels).forEach((value) => {
             playerDirections.forEach(dir => {
-                if (!scene.anims.exists(`move-${value.level}-${dir.key}`)) {
-                    scene.anims.create({
-                        key: `move-${value.level}-${dir.key}`,
-                        frames: scene.anims.generateFrameNumbers(Atlas16, {
-                            start: value.frame + dir.start,
-                            end: value.frame + dir.end
-                        }),
-                        frameRate: 10,
-                        repeat: -1
-                    });
+                if (!scene.anims.exists(`move-${value.playerIndex}-${value.level}-${dir.key}`)) {
+                    scene.anims.create(
+                        {
+                            key: `move-${dir.playerIndex}-${value.level}-${dir.key}`,
+                            frames: scene.anims.generateFrameNumbers(Atlas16, {
+                                start: value.frame[dir.playerIndex] + dir.start,
+                                end: value.frame[dir.playerIndex] + dir.end
+                            }),
+                            frameRate: 10,
+                            repeat: -1
+                        });
                 }
             });
         });
@@ -49,27 +54,26 @@ export default class AnimationManager {
             });
         });
 
-        // Сюда же можно добавить анимацию взрыва или появления звезды (спавна)
-        if (!scene.anims.exists('explosion')) {
+        if (!scene.anims.exists(GameAnimations.EXPLOSION)) {
             scene.anims.create({
-                key: 'explosion',
+                key: GameAnimations.EXPLOSION,
                 frames: scene.anims.generateFrameNumbers(Atlas16, {start: 216, end: 218}), // пример кадров
                 frameRate: 15,
                 hideOnComplete: true
             });
         }
 
-        if (!scene.anims.exists('spawn-star')) {
+        if (!scene.anims.exists(GameAnimations.SPAWN_STAR)) {
             scene.anims.create({
-                key: 'spawn-star',
+                key: GameAnimations.SPAWN_STAR,
                 frames: scene.anims.generateFrameNumbers(Atlas16, {start: 166, end: 169}), // проверь индексы звезды
                 frameRate: 10,
                 repeat: 3
             });
         }
-        if (!scene.anims.exists('shield-loop')) {
+        if (!scene.anims.exists(GameAnimations.SHIELD_LOOP)) {
             scene.anims.create({
-                key: 'shield-loop',
+                key: GameAnimations.SHIELD_LOOP,
                 frames: scene.anims.generateFrameNumbers(Atlas16, {start: 241, end: 242}),
                 frameRate: 20,
                 repeat: -1

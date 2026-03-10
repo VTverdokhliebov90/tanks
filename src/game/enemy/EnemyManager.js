@@ -37,10 +37,15 @@ export default class EnemyManager {
     }
 
     initEventListeners() {
-        this.scene.events.on(GameEvents.ENEMY_DIE, () => {
-            if (this.findActiveEnemies() <= 0 && this.reservEmount <= 0) {
+        this.scene.events.on(GameEvents.ENEMY_DIE, (enemy) => {
+            enemy.setActive(false);
+            enemy.setVisible(false);
+            const activeCount = this.findActiveEnemies();
+
+            if (activeCount <= 0 && this.reservEmount <= 0) {
                 this.scene.events.emit(GameEvents.LEVEL_COMPLETE);
             }
+            enemy.destroy();
         });
     }
 

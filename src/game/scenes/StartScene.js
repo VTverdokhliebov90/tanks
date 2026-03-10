@@ -16,10 +16,16 @@ export default class StartScene extends Phaser.Scene {
             fontWeight: 'bold'
         }).setOrigin(0.5);
 
-        const startText = this.add.text(width / 2, height / 1.6, 'PRESS SPACE TO START', {
-            fontSize: '20px',
-            fill: '#ff0',
-            fontFamily: 'monospace'
+        this.onePlayerText = this.add.text(width / 2, height / 2, '1 PLAYER', {
+            fontSize: '24px', fill: '#ff0', fontFamily: 'monospace'
+        }).setOrigin(0.5);
+
+        this.twoPlayersText = this.add.text(width / 2, height / 1.8, '2 PLAYERS', {
+            fontSize: '24px', fill: '#fff', fontFamily: 'monospace'
+        }).setOrigin(0.5);
+
+        const startText = this.add.text(width / 2, height / 1.55, 'PRESS SPACE TO START', {
+            fontSize: '18px', fill: '#888', fontFamily: 'monospace'
         }).setOrigin(0.5);
 
         this.tweens.add({
@@ -49,17 +55,42 @@ export default class StartScene extends Phaser.Scene {
             align: 'center'
         }).setOrigin(0.5);
 
-        this.input.keyboard.once('keydown-SPACE', () => {
-            // this.input.gamepad.removeAllListeners();
-            this.scene.start('MainScene');
-        });
 
-        this.input.gamepad.on('down', (pad, button, index) => {
-            if (button.index === 9) {
-                this.scene.start('MainScene');
-            }
-        });
+        this.initInputs();
 
     }
 
+    initInputs() {
+        // 4. Управление выбором (Клавиатура)
+        this.input.keyboard.on('keydown-W', () => this.updateSelection(1));
+        this.input.keyboard.on('keydown-S', () => this.updateSelection(2));
+        this.input.keyboard.on('keydown-UP', () => this.updateSelection(1));
+        this.input.keyboard.on('keydown-DOWN', () => this.updateSelection(2));
+
+        // 5. Запуск игры
+        this.input.keyboard.once('keydown-SPACE', () => this.startGame());
+
+        // Геймпад: старт и выбор
+        this.input.gamepad.on('down', (pad, button) => {
+            if (button.index === 12) this.updateSelection(1); // D-pad Up
+            if (button.index === 13) this.updateSelection(2); // D-pad Down
+            if (button.index === 9 || button.index === 0) this.startGame(); // Start или A
+        });
+    }
+
+    updateSelection(count) {
+        this.playersCount = count;
+        if (count === 1) {
+            this.onePlayerText.setFill('#ff0');
+            this.twoPlayersText.setFill('#fff');
+        } else {
+            this.onePlayerText.setFill('#fff');
+            this.twoPlayersText.setFill('#ff0');
+        }
+    }
+
+    startGame() {
+        console.log('Запуск игры для:', this.playersCount); // Проверь, что тут не 1 всегда
+        this.scene.start('MainScene', { players: this.playersCount });
+    }
 }
