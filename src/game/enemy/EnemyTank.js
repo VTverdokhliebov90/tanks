@@ -151,7 +151,6 @@ export default class EnemyTank extends Phaser.Physics.Arcade.Sprite {
         if (!this.scene || !this.active) return;
 
         const {playerManager, base} = this.scene;
-        // const player = Phaser.Utils.Array.GetRandom(playerManager.group.getChildren());
         const targets = [base, ...playerManager.group.getChildren()];
 
         for (let target of targets) {
